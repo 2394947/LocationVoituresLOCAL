@@ -105,7 +105,7 @@ END
 GO
 
 -----===== Les 3 fonctions générales =====-----
-
+-- FCT calcule du montant total hors taxes
 CREATE OR ALTER FUNCTION FCT_CalculeMontantTotalHorsTaxes(@p_locationId INT)
 RETURNS DECIMAL(7,2)
 AS
@@ -129,6 +129,7 @@ BEGIN
 END
 GO
 
+--FCT calcule du montant total TPS
 CREATE OR ALTER FUNCTION FCT_CalculeMontantTPS(@p_locationId INT)
 RETURNS DECIMAL(7,2)
 AS
@@ -144,6 +145,7 @@ BEGIN
 END
 GO
 
+--FCT calcule du montant total TVQ
 CREATE OR ALTER FUNCTION FCT_CalculeMontantTVQ(@p_locationId INT)
 RETURNS DECIMAL(7,2)
 AS
