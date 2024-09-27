@@ -192,9 +192,8 @@ BEGIN
 
 		INSERT INTO facture (locationId, clientId, dateFacture, montantHorsTaxes, montantTaxesTVQ, montantTaxesTPS)
 			         VALUES (@locationId, @cliendId, GETDATE(), @montantHorsTaxes, @montantTVQ, @montantTPS);
-
--- pas complet
-		--update facture lignes
+          
 	END;
 END;
 GO
+
