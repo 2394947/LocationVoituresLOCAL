@@ -1,5 +1,6 @@
 USE locationVoitures;
 
+------------- Fonction pour obtenir le nombre de jours de la location ------------------------------------------------
 GO
 CREATE OR ALTER FUNCTION FCT_ObtenirNbJoursLocation(@locationId INT)
 RETURNS INT
