@@ -245,13 +245,7 @@ BEGIN
     DECLARE @factureId INT = (SELECT factureId FROM inserted);
     
     DECLARE @locationId INT = (SELECT locationId FROM inserted);
-    DECLARE @nbJoursLocation INT = FCT_ObtenirNbJoursLocation(@locationId);
-    DECLARE @fraisNettoyage DECIMAL(7,2) = 0;
-
-    IF @nbJoursLocation > 1
-        BEGIN
-            SET @fraisNettoyage = (SELECT fraisNettoyage FROM tarifLocation);
-        END
+    DECLARE @fraisNettoyage DECIMAL(7,2) = FCT_CalculeFraisDeNettoyage;
 
     DECLARE @description TEXT = "Frais de nettoyage."
     DECLARE @tauxTVQ DECIMAL(3,2) = (SELECT tauxTVQ FROM tarifLocation);
@@ -262,3 +256,23 @@ BEGIN
 END
 GO
     
+-- trigger ligne facture 3 frais essence
+CREATE OR ALTER TRIGGER TR_Update_factureLigneEssence
+ON facture
+AFTER INSERT
+AS 
+BEGIN
+    DECLARE @nextFactureLigneId INT = (SELECT MAX(factureLigneId) + 1 FROM factureLigfne);
+    DECLARE @factureId INT = (SELECT factureId FROM inserted);
+
+    DECLARE @locationId INT = (SELECT locationId FROM inserted);
+    DECLARE @fraisEssence DECIMAL(7,2) = FCT_CalculerFraisEssence(@p_locationId);
+
+    DECLARE @description TEXT = "Frais d'essence."
+    DECLARE @tauxTVQ DECIMAL(3,2) = (SELECT tauxTVQ FROM tarifLocation);
+    DECLARE @tauxTPS DECIMAL(3,2) = (SELECT tauxTPS FROM tarifLocation);
+
+    INSERT INTO factureLigne (factureLigneId, facturId, prixUnitaire, quantite, [description], tauxTaxesTVQ, tauxTaxesTPS)
+                VALUES (@nextFactureLigneId, @factureId, @fraisEssence, @nbJoursLocation, @description, @tauxTVQ, @tauxTPS);
+END
+GO
