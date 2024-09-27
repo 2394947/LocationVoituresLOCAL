@@ -72,20 +72,23 @@ CREATE OR ALTER FUNCTION FCT_CalculerFraisEssence(@p_locationId INT)
 RETURNS DECIMAL(7,2)
 AS
 BEGIN
-	 DECLARE @tarifFraisEssenceLitre DECIMAL(5,2)
-	 , @tarifFraisFixeEssence DECIMAL(5,2)
-	 , @fraisEssenceTotal DECIMAL(7,2);
+    IF((SELECT * FROM FCT_ADesFraisEssence(@p_locationId))=1)
+    BEGIN
+	    DECLARE @tarifFraisEssenceLitre DECIMAL(5,2)
+	    , @tarifFraisFixeEssence DECIMAL(5,2)
+	    , @fraisEssenceTotal DECIMAL(7,2);
 
-	 SET @tarifFraisEssenceLitre = (SELECT fraisEssenceParLitreManquant FROM tarifLocation);
-	 SET @tarifFraisFixeEssence = (SELECT fraisBaseFixeEssence FROM tarifLocation);
-	 SET @fraisEssenceTotal = 
-	 (
-		(SELECT * FROM FCT_ObtenirQuantiteEssenceRestante(@p_locationId)) * 
-		@tarifFraisEssenceLitre + 
-		@tarifFraisFixeEssence
-	 );
-
-	 RETURN @fraisEssenceTotal;
+	    SET @tarifFraisEssenceLitre = (SELECT fraisEssenceParLitreManquant FROM tarifLocation);
+	    SET @tarifFraisFixeEssence = (SELECT fraisBaseFixeEssence FROM tarifLocation);
+	    SET @fraisEssenceTotal = 
+	    (
+		    (40 -(SELECT * FROM FCT_ObtenirQuantiteEssenceRestante(@p_locationId))) * 
+		    @tarifFraisEssenceLitre + 
+		    @tarifFraisFixeEssence
+	    );
+	    RETURN @fraisEssenceTotal;
+    END
+    RETURN 0.00;
 END
 
 --------------- Fonction pour determiner si il y a des frais de nettoyage ------------------------------------
