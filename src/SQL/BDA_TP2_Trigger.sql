@@ -248,7 +248,7 @@ BEGIN
     DECLARE @factureId INT = (SELECT factureId FROM inserted);
     
     DECLARE @locationId INT = (SELECT locationId FROM inserted);
-    DECLARE @fraisNettoyage DECIMAL(7,2) = FCT_CalculeFraisDeNettoyage;
+    DECLARE @fraisNettoyage DECIMAL(7,2) = FCT_CalculeFraisNettoyage;
 
     DECLARE @description TEXT = "Frais de nettoyage."
     DECLARE @tauxTVQ DECIMAL(3,2) = (SELECT tauxTVQ FROM tarifLocation);
