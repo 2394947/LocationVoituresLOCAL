@@ -104,6 +104,19 @@ BEGIN
 END
 GO
 
+------------------ Fonction pour calculer les frais de nettoyage -------------------------------------------
+GO
+CREATE OR ALTER FUNCTION FCT_CalculFraisNettoyage(@p_locationId INT)
+RETURNS DECIMAL(7,2)
+AS
+BEGIN
+	DECLARE @tarifFraisNettoyage DECIMAL(5,2);
+
+	SET @tarifFraisNettoyage = (SELECT fraisNettoyage FROM tarifLocation);
+
+	RETURN @tarifFraisNettoyage;
+END
+
 -----===== Les 3 fonctions générales =====-----
 -- FCT calcule du montant total hors taxes
 CREATE OR ALTER FUNCTION FCT_CalculeMontantTotalHorsTaxes(@p_locationId INT)
