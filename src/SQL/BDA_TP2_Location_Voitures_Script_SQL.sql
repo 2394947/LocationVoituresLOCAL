@@ -95,3 +95,14 @@ CREATE TABLE factureLigne
    ,CONSTRAINT FK_factureId_facture2 FOREIGN KEY (factureId) REFERENCES facture(factureId)
    ,CONSTRAINT CHK_quantite_min1 CHECK (quantite>=1)
 );
+
+DROP TABLE IF EXISTS tarifLocation;
+CREATE TABLE tarifLocation
+(
+	fraisBase DECIMAL(5,2) DEFAULT 60.00
+   ,fraisEssenceParLitreManquant DECIMAL(5,2) DEFAULT 3
+   ,fraisBaseFixeEssence DECIMAL(5,2) DEFAULT 50
+   ,fraisNettoyage DECIMAL(5,2) DEFAULT 30
+   ,tauxTPS DECIMAL(6,5) DEFAULT 0.09975
+   ,tauxTVQ DECIMAL(3,2) DEFAULT 0.05
+);
