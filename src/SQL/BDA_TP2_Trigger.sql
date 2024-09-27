@@ -180,7 +180,7 @@ GO
 
 
 -----=======  DAH TRIGGER  =======-----
-
+-- trigger principal
 CREATE OR ALTER TRIGGER TR_Update_DateFinReelle_sur_Location
 ON [location]
 AFTER UPDATE
@@ -210,3 +210,50 @@ BEGIN
 END;
 GO
 
+-- trigger ligne facture 1 frais de base
+CREATE OR ALTER TRIGGER TR_Update_factureLigneFraisBase
+ON facture
+AFTER INSERT
+AS 
+BEGIN
+    DECLARE @nextFactureLigneId INT = (SELECT MAX(factureLigneId) + 1 FROM factureLigfne);
+    DECLARE @factureId INT = (SELECT factureId FROM inserted);
+    DECLARE @fraisbase DECIMAL(7,2) = (SELECT fraisBase FROM tarifLocation);
+    DECLARE @locationId INT = (SELECT locationId FROM inserted);
+    DECLARE @nbJoursLocation INT = FCT_ObtenirNbJoursLocation(@locationId);
+    DECLARE @description TEXT = "Frais de base et nombre de jour de location."
+    DECLARE @tauxTVQ DECIMAL(3,2) = (SELECT tauxTVQ FROM tarifLocation);
+    DECLARE @tauxTPS DECIMAL(3,2) = (SELECT tauxTPS FROM tarifLocation);
+
+    INSERT INTO factureLigne (factureLigneId, facturId, prixUnitaire, quantite, [description], tauxTaxesTVQ, tauxTaxesTPS)
+                VALUES (@nextFactureLigneId, @factureId, @fraisbase, @nbJoursLocation, @description, @tauxTVQ, @tauxTPS);
+END;
+GO
+
+-- trigger ligne facture 2 frais nettoyage
+CREATE OR ALTER TRIGGER TR_Update_factureLigneNettoyage
+ON facture
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @nextFactureLigneId INT = (SELECT MAX(factureLigneId) + 1 FROM factureLigfne);
+    DECLARE @factureId INT = (SELECT factureId FROM inserted);
+    
+    DECLARE @locationId INT = (SELECT locationId FROM inserted);
+    DECLARE @nbJoursLocation INT = FCT_ObtenirNbJoursLocation(@locationId);
+    DECLARE @fraisNettoyage DECIMAL(7,2) = 0;
+
+    IF @nbJoursLocation > 1
+        BEGIN
+            SET @fraisNettoyage = (SELECT fraisNettoyage FROM tarifLocation);
+        END
+
+    DECLARE @description TEXT = "Frais de nettoyage."
+    DECLARE @tauxTVQ DECIMAL(3,2) = (SELECT tauxTVQ FROM tarifLocation);
+    DECLARE @tauxTPS DECIMAL(3,2) = (SELECT tauxTPS FROM tarifLocation);
+
+    INSERT INTO factureLigne (factureLigneId, facturId, prixUnitaire, quantite, [description], tauxTaxesTVQ, tauxTaxesTPS)
+                VALUES (@nextFactureLigneId, @factureId, @fraisNettoyage, @nbJoursLocation, @description, @tauxTVQ, @tauxTPS);
+END
+GO
+    
