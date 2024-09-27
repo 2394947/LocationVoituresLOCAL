@@ -52,7 +52,7 @@ CREATE TABLE location
    ,dateFinReelle DATETIME NULL
    ,odometreDebut INT NOT NULL
    ,odometreFin INT NOT NULL
-   ,essenceDebut INT DEFAULT 40
+   ,essenceDebut INT NULL DEFAULT 40
    ,essenceFin INT NOT NULL
    ,clientId UNIQUEIDENTIFIER  
    ,voitureId INT
