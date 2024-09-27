@@ -9,6 +9,7 @@ BEGIN
 	IF EXISTS(SELECT 1 FROM tarifLocation)
 	BEGIN
 		RAISERROR('La table tarifLocation peut contenir un seul enregistrement, essayez de mettre à jour (update)?',11,1);
+		RETURN;
 	END
 	INSERT INTO tarifLocation(fraisBase,fraisEssenceParLitreManquant,fraisBaseFixeEssence,fraisNettoyage,tauxTPS,tauxTVQ)
 		SELECT
